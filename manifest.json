@@ -1,0 +1,30 @@
+{
+  "name": "Form Fodder",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "...",
+
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
+
+  "browser_action": {
+    "default_title": "Fill it up yo!",
+    "default_icon": "icon.png"
+  },
+
+  "permissions": [
+    "https://*/*",
+    "http://*/*",
+    "tabs",
+    "storage"
+  ]
+}
