@@ -1,17 +1,10 @@
 function modResult(reformattedIban) {
 
-    var numberMapping = {
-        '0':  0, '1':  1, '2':  2, '3':  3, '4':  4, '5':  5, '6':  6, '7':  7, '8':  8, '9':  9,
-        'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15, 'G': 16, 'H': 17, 'I': 18, 'J': 19,
-        'K': 20, 'L': 21, 'M': 22, 'N': 23, 'O': 24, 'P': 25, 'Q': 26, 'R': 27, 'S': 28, 'T': 29,
-        'U': 30, 'V': 31, 'W': 32, 'X': 33, 'Y': 34, 'Z': 35
-    };
-
     var total = 0;
 
     for (var i = 0, j = reformattedIban.length; i < j; i++) {
 
-        var digit = numberMapping[reformattedIban[i]];
+        var digit = parseInt(reformattedIban[i], 36);
         var multiplier = digit > 9 ? 100 : 10;
 
         total = (total * multiplier) + digit;
@@ -82,16 +75,17 @@ function searchAndReplace(placeholderPatternsStr) {
 
 (function() {
 
-    var placeholderPatternsStr = "voornaam                    Piet\n" +
-                                 "tussenvoegsel               van\n" +
-                                 "achternaam                  Verdriet\n" +
-                                 "geboortedatum               01/01/1970\n" +
-                                 "postcode                    3000AA\n" +
-                                 "huisnr                      42\n" +
-                                 "toevoeging                  a\n" +
-                                 "iban|rekening(nummer)?      randomIban(['RABO', 'ASNB', 'INGB', 'SNSB'])\n" +
-                                 "e-?mail                     bart+qwerty1@q42.nl\n" +
-                                 "wachtwoord                  Test123456";
+    var placeholderPatternsStr =
+        "voornaam                    Piet\n" +
+        "tussenvoegsel               van\n" +
+        "achternaam                  Verdriet\n" +
+        "geboortedatum|dd.mm.jjjj    01/01/1970\n" +
+        "postcode|zip                1042AA\n" +
+        "huisnr|huisnummer           42\n" +
+        "toevoeging                  a\n" +
+        "iban|rekening(nummer)?      randomIban(['RABO', 'ASNB', 'INGB', 'SNSB'])\n" +
+        "e-?mail                     bart+qwerty1@q42.nl\n" +
+        "wachtwoord                  Test123456";;
 
     chrome.storage.sync.get(['alreadyStarted', 'banks', 'placeholderPatterns'], function(items) {
 
