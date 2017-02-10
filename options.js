@@ -1,10 +1,9 @@
-
 function saveSettings() {
 
-    var placeholderPatterns = document.getElementById('placeholderPatterns').value;
+    var namePatterns = document.getElementById('namePatterns').value;
 
     chrome.storage.sync.set({
-        placeholderPatterns: placeholderPatterns
+        namePatterns: namePatterns
     }, function() {
         var status = document.getElementById('status');
         status.textContent = 'options saved';
@@ -15,8 +14,8 @@ function saveSettings() {
 }
 
 function loadSettings() {
-    chrome.storage.sync.get(['banks', 'placeholderPatterns'], function(items) {
-        document.getElementById('placeholderPatterns').value = items.placeholderPatterns;
+    chrome.storage.sync.get(['banks', 'namePatterns'], function(items) {
+        document.getElementById('namePatterns').value = items.namePatterns;
     });
 }
 

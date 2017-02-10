@@ -25,31 +25,31 @@ function randomIban(banks) {
     return "NL" + (checkNumber < 10 ? '0' + checkNumber : checkNumber) + bank + bban;
 }
 
-function searchAndReplace(placeholderPatternsStr) {
+function searchAndReplace(namePatternsStr) {
 
-    var placeholderPatternsLines = placeholderPatternsStr.trim().split(/[\r\n]+/);
-    var placeholderPatterns = {};
+    var namePatternsLines = namePatternsStr.trim().split(/[\r\n]+/);
+    var namePatterns = {};
 
-    for (var i = 0, j = placeholderPatternsLines.length; i < j; i++) {
-        var matches = placeholderPatternsLines[i].trim().match(/^(\S+)\s+(.+)/)
-        placeholderPatterns[matches[1]] = matches[2];
+    for (var i = 0, j = namePatternsLines.length; i < j; i++) {
+        var matches = namePatternsLines[i].trim().match(/^(\S+)\s+(.+)/)
+        namePatterns[matches[1]] = matches[2];
     }
 
     var inputs = document.getElementsByTagName('input');
 
     for (var index = 0; index < inputs.length; index++) {
 
-        if (inputs[index] && inputs[index].placeholder) {
+        if (inputs[index] && inputs[index].name) {
 
             var foundMatchingPattern = false;
 
-            for (var pattern in placeholderPatterns) {
+            for (var pattern in namePatterns) {
 
                 var input = inputs[index];
 
-                if (input.placeholder.match(new RegExp(pattern, 'i'))) {
+                if (input.name.match(new RegExp(pattern, 'i'))) {
 
-                    var value = placeholderPatterns[pattern];
+                    var value = namePatterns[pattern];
 
                     if (value.endsWith(")")) {
                         value = eval(value);
@@ -67,7 +67,7 @@ function searchAndReplace(placeholderPatternsStr) {
             }
 
             if (!foundMatchingPattern) {
-                console.log('No pattern found for placeholder: ' + inputs[index].placeholder);
+                console.log('No `name` attribute found for input: ' + inputs[index].name);
             }
         }
     }
@@ -75,29 +75,36 @@ function searchAndReplace(placeholderPatternsStr) {
 
 (function() {
 
-    var placeholderPatternsStr =
-        "voornaam                    Piet\n" +
-        "tussenvoegsel               van\n" +
-        "achternaam                  Verdriet\n" +
-        "geboortedatum|dd.mm.jjjj    01/01/1970\n" +
-        "postcode|zip                1042AA\n" +
-        "huisnr|huisnummer           42\n" +
-        "toevoeging                  a\n" +
-        "iban|rekening(nummer)?      randomIban(['RABO', 'ASNB', 'INGB', 'SNSB'])\n" +
-        "e-?mail                     bart+qwerty1@q42.nl\n" +
-        "wachtwoord                  Test123456";;
+    var version = 2;
 
-    chrome.storage.sync.get(['alreadyStarted', 'banks', 'placeholderPatterns'], function(items) {
+    var namePatternsStr =
+        "firstname                    Piet\n" +
+        "prefix                       van\n" +
+        "lastname                     Verdriet\n" +
+        "birthdate                    01/01/1970\n" +
+        "zipcode                      1042AA\n" +
+        "housenumber                  42\n" +
+        "country                      Nederland\n" +
+        "street                       Radarweg\n" +
+        "city                         Amsterdam\n" +
+        "password                     Test123456\n" +
+        "bankaccount                  randomIban(['RABO', 'ASNB', 'INGB', 'SNSB'])\n" +
+        "e-?mail                      bart+qwerty1@q42.nl\n";
 
-        if (!items['alreadyStarted']) {
+    chrome.storage.sync.get(['alreadyStarted', 'banks', 'namePatterns', 'version'], function(items) {
+
+        console.log("previous version:", items['version'], ", current version:", version);
+
+        if (!items['alreadyStarted'] || items['version'] != version) {
             chrome.storage.sync.set({
+                version: version,
                 alreadyStarted: 'true',
-                placeholderPatterns: placeholderPatternsStr
+                namePatterns: namePatternsStr
             }, function() {
-                searchAndReplace(placeholderPatternsStr);
+                searchAndReplace(namePatternsStr);
             });
         } else {
-            searchAndReplace(items['placeholderPatterns']);
+            searchAndReplace(items['namePatterns']);
         }
     });
 })();
